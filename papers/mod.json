@@ -5,6 +5,7 @@
   "description": "Write an academic paper section by section: Claude writes the brief and reviews, a cheap OpenCode model writes the prose.",
   "min_tinto": "2.0.0",
   "coordinator": "COORDINATOR.md",
+  "icon": "icon.svg",
   "settings": {
     "stages": {
       "explore": {

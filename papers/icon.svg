@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>Papers</title>
+  <!-- A page with its folded corner: the title line in terracotta -->
+  <rect width="64" height="64" fill="#2a1a10"/>
+  <path d="M16 9H38L48 19V55H16Z" fill="#faf1e8"/>
+  <path d="M38 9V19H48Z" fill="#b9a58c"/>
+  <g stroke-width="4.5">
+    <path d="M22 29H36" stroke="#c74f28"/>
+    <path d="M22 38H42" stroke="#2a1a10"/>
+    <path d="M22 47H42" stroke="#2a1a10"/>
+  </g>
+</svg>

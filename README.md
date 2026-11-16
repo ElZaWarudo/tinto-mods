@@ -124,3 +124,7 @@ as a conflict.
    agents it expects, and what you tested it on.
 
 Changes to an existing mod raise its `version`.
+
+## License
+
+GPL-3.0. See [LICENSE](LICENSE).

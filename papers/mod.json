@@ -2,7 +2,7 @@
   "id": "papers",
   "name": "Papers",
   "version": "0.1.0",
-  "description": "Write an academic paper section by section: Claude writes the brief and reviews, a cheap OpenCode model writes the prose.",
+  "description": "Escribe un artículo académico sección a sección: Claude prepara el encargo y revisa, y un modelo barato de OpenCode redacta.",
   "min_tinto": "2.0.0",
   "coordinator": "COORDINATOR.md",
   "icon": "icon.svg",

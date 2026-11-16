@@ -49,13 +49,17 @@ Before creating anything:
      builds this paper). A dependency install the build needs (a Python
      requirements file) goes in `setup_add`; a system install (a TeX
      distribution) is the user's: tell them.
-   - `stages`: the expected setup is explore and review on `claude`,
-     implementation on `opencode` with the model the user wants as writer.
-     Stage agents are not a setting you can propose: if they differ, tell
-     the user once, in one line, to set them in Tinto (Ajustes), and until
-     then pass `agent` (and for the writer `model`) on every `dispatch_job`
-     as section 4 says. Never pick the writer model yourself: use the one
-     fixed for implementation, or one the user named.
+   - `stages`, `skip_stages`, `no_jira_steps`: this mod proposes explore
+     and review on `claude`, implementation on `opencode`, no tests stage,
+     no QA stage and no Jira steps. The user approves that proposal in Tinto
+     when they choose the mod for the repository. If `read_settings` shows
+     they are not in force yet, tell the user once, in one line, that the
+     mod's settings wait for their approval, and until then pass `agent` on
+     every `dispatch_job` as section 4 says.
+   - The writer model: the mod fixes none. Never pick it yourself: use the
+     model set for the implementation stage, or ask the user once with
+     `request_decisions` which of their OpenCode models writes, then propose
+     it for the implementation stage with `propose_settings` `stages`.
    - `scope`: if it is `never`, the explore stage cannot run, and the brief
      comes from it. Ask the user to set Alcance to always or optional in
      Ajustes before going on.
@@ -104,9 +108,10 @@ has no CI for its documents.
 | 3 | `review` | `claude` | no | Checks fidelity to the brief and the evidence; findings send the task back | `MOD/stages/review.md` |
 | - | checks | Tinto | - | Runs the task's `checks` after each writing stage | - |
 
-There is no tests stage and no QA stage. Tinto may still list `tests` as the
-task's `next_stage`: do not dispatch it. QA is skipped when the repository has
-no QA configured.
+There is no tests stage and no QA stage: with the mod's settings approved
+(`skip_stages`), Tinto does not ask for them and refuses a job of those roles.
+If a task's `next_stage` is `tests`, the settings are not approved yet: do not
+dispatch it, and tell the user.
 
 ### 3.1 Explore: the brief
 
@@ -224,10 +229,10 @@ within the outline, wording of a heading) are yours: decide them in the brief.
 
 ## 6. The delivery ladder
 
-commit, push, PR, merge. There is no issue tracker: never request a `jira`
-step. If a task's phase still shows a Jira step as its `next_step`, the
-repository's settings still include Jira: tell the user in one line rather
-than requesting it.
+commit, push, PR, merge. There is no issue tracker: with the mod's settings
+approved (`no_jira_steps`) the ladder has no Jira step and a task is delivered
+at its merge. If a task's `next_step` is a Jira step, the settings are not
+approved yet: tell the user in one line rather than requesting it.
 
 1. **Commit**: once review passed and the checks pass, request `commit` with
    the writer's `commit_plan`, corrected to the repository's commit

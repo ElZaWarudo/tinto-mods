@@ -6,6 +6,22 @@
   "min_tinto": "2.0.0",
   "coordinator": "COORDINATOR.md",
   "settings": {
+    "stages": {
+      "explore": {
+        "agent": "claude"
+      },
+      "implementation": {
+        "agent": "opencode"
+      },
+      "review": {
+        "agent": "claude"
+      }
+    },
+    "skip_stages": [
+      "tests",
+      "qa"
+    ],
+    "no_jira_steps": true,
     "verification": "Changes are paper text, not code: the repository's own commands check them (its consistency check and the document build), and a co-author who did not write the change reviews each pull request before it merges. There is no user interface to test."
   }
 }

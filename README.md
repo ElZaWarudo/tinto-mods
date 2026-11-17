@@ -40,7 +40,7 @@ Complementos says so and you update it.
 
 | Mod | What it does |
 |---|---|
-| [`papers`](papers/) | Writes an academic paper section by section. Claude writes a brief for each section, checking that every claim, result and citation has evidence in the repository; a cheap model through OpenCode (DeepSeek, Qwen, Kimi...) turns the brief into prose; Claude reviews it against the brief and the evidence. Each section is a task that ends in a pull request a co-author reviews. It can also compare writer models on the same section. |
+| [`papers`](papers/) | Takes an academic paper from its sources to its PDF, in four flows. **Research**: Claude finds and verifies sources on the web and writes the bibliography entries. **Protocol**: Claude designs an experiment, you approve its essentials, and it is preregistered after an independent methodology review. **Experiment**: Tinto runs it on the code repository at a pinned commit, Claude analyses it, and you read the results per hypothesis in a record where you can report problems; a correction is a new run, never an edit. **Section**: Claude writes a brief, you see what will be written, a cheap OpenCode model writes it and Claude reviews it; you open each version of the PDF in Tinto. Each task ends in a pull request a co-author reviews. It installs LaTeX (TinyTeX) by itself in WSL. |
 
 ## Building your own mod
 
@@ -63,11 +63,14 @@ my-mod/
   "name": "My mod",
   "version": "0.1.0",
   "description": "One line, shown in Complementos.",
-  "min_tinto": "2.0.0",
+  "min_tinto": "2.1.0",
   "coordinator": "COORDINATOR.md",
   "settings": {}
 }
 ```
+
+Only `id`, `name`, `version` and `coordinator` are required; the table below
+lists the rest. `stages`, `flows` and `start` need Tinto 2.1.0.
 
 | Field | Meaning |
 |---|---|
@@ -77,7 +80,12 @@ my-mod/
 | `description` | One line for Complementos. |
 | `min_tinto` | The oldest Tinto that can run it. |
 | `coordinator` | The guide's path, inside the folder. |
-| `settings` | Optional. Delivery settings proposed to the user when they choose the mod, with the same fields a coordinator's `propose_settings` takes (for example `checks_add`, `setup_add`, `verification`). They never apply by themselves. |
+| `icon` | Optional. An `.svg` or `.png` inside the folder, at most 64 KB, shown only as a picture. |
+| `settings` | Optional. Delivery settings proposed to the user when they choose the mod, with the same fields a coordinator's `propose_settings` takes (for example `checks_add`, `setup_add`, `bootstrap`, `verification`, and `stages` keyed by stage id). They never apply by themselves. |
+| `settings_reason` | Optional. One or two plain lines shown with that proposal: what the settings do, and for a tool they install, what it is, where it goes and how big it is. |
+| `stages` | Optional. The mod's own stages, by id (`[a-z0-9-]+`, not a built-in role such as `review` or `qa`): `{"label": "…", "as": "…", "web": true}`. `as` is the built-in behaviour it has: `explore` (reads, its findings are questions), `implementation` (writes), `review` (reads, findings send work back), `qa` (writes a record the user reads and reports problems on) or `command` (Tinto runs one of the repository's allowed commands; it passes on exit 0). `web` gives its jobs web access. |
+| `flows` | Optional. Ordered lists of stages a task can be created with: `{"label": "…", "stages": ["…"]}`, mixing the mod's stages and the built-in `explore`, `tests`, `implementation`, `review`, `qa`. The next stage is the first without a passing attempt; work sent back goes to the nearest earlier stage that writes. |
+| `start` | Optional. Up to five questions shown as a short form when the user starts a batch: `{"id", "label", "options"}` (a fixed choice), `{"id", "label", "from"}` (a choice among the repository's files matching a glob) or free text, with `"optional": true` when it may be left empty. The coordinator receives the answers as its first message. |
 
 Tinto ignores fields it does not know. A manifest that does not parse, or
 whose paths leave the folder, makes that mod invalid: it is listed with its

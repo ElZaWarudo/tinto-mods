@@ -55,6 +55,20 @@ Go through every item. Each failure is one finding: what is wrong, where
 13. The repository's own conventions for this kind of file hold (its
     `AGENTS.md`).
 
+## When the prose reports the experiment run in this task
+
+Open the protocol, raw run and analysis files the assignment names.
+Trace each reported value to the analysis output and independently
+recompute each reported outcome from the raw data. Check it against the
+criterion fixed in the protocol and verify that the prose reports material
+deviations, uncertainty and sample limits. An outcome that refutes a
+hypothesis is valid evidence when it follows from the run.
+
+Start findings about computations or generated figures with "Analysis:".
+Start findings about execution or departures from the protocol with
+"Methodology:". Give the coordinator the relevant path and measurement
+or procedure so it can send the work to the right stage.
+
 ## Not findings
 
 Wording you would have chosen differently, when it is correct and within the

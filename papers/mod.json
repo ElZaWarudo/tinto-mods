@@ -1,8 +1,8 @@
 {
   "id": "papers",
   "name": "Papers",
-  "version": "0.2.0",
-  "description": "Un artículo académico de las fuentes al PDF: investigación, experimentos preregistrados y secciones. Claude piensa y revisa; un modelo barato de OpenCode redacta.",
+  "version": "0.3.0",
+  "description": "Elige un flujo para tu artículo. Redacta una sección o lleva un experimento preregistrado desde la ejecución hasta el manuscrito.",
   "min_tinto": "2.1.0",
   "coordinator": "COORDINATOR.md",
   "icon": "icon.svg",
@@ -14,47 +14,46 @@
     "prepare": { "label": "Preparación", "as": "implementation" },
     "run": { "label": "Ejecución", "as": "command" },
     "analysis": { "label": "Análisis", "as": "implementation" },
-    "results": { "label": "Resultados", "as": "qa" },
-    "brief": { "label": "Encargo", "as": "explore" },
+    "brief": { "label": "Alcance", "as": "explore" },
     "write": { "label": "Redacción", "as": "implementation" },
-    "prose-review": { "label": "Revisión", "as": "review" }
+    "prose-review": { "label": "Revisión editorial", "as": "review" }
   },
   "flows": {
-    "research": { "label": "Investigación", "stages": ["sources", "sources-review"] },
+    "research": { "label": "Investigación de fuentes", "stages": ["sources", "sources-review"] },
     "protocol": { "label": "Protocolo", "stages": ["protocol", "methods-review"] },
-    "experiment": { "label": "Experimento", "stages": ["prepare", "run", "analysis", "results"] },
-    "section": { "label": "Sección", "stages": ["brief", "write", "prose-review"] }
+    "experiment": { "label": "Experimento y redacción", "stages": ["prepare", "run", "analysis", "brief", "write", "prose-review"] },
+    "section": { "label": "Redacción", "stages": ["brief", "write", "prose-review"] }
   },
   "start": [
-    { "id": "paper", "label": "Artículo", "from": "papers/*/paper.yaml" },
     {
       "id": "goal",
-      "label": "Qué quieres hacer",
+      "label": "Flujo de Papers",
       "options": [
-        "Buscar y verificar fuentes",
-        "Preparar un experimento (protocolo)",
-        "Ejecutar un experimento ya registrado",
-        "Escribir o revisar una sección"
+        "Redacción",
+        "Experimento y redacción",
+        "Protocolo",
+        "Investigación de fuentes"
       ]
     },
-    { "id": "notes", "label": "Algo que deba saber", "optional": true }
+    { "id": "paper", "label": "Artículo", "from": "papers/*/paper.yaml" },
+    { "id": "notes", "label": "Encargo", "optional": true },
+    { "id": "writer-model", "label": "Modelo de redacción (OpenCode, provider/model)", "optional": true }
   ],
   "settings": {
     "stages": {
       "sources": { "agent": "claude" },
-      "sources-review": { "agent": "claude" },
+      "sources-review": { "agent": "claude", "model": "opus" },
       "protocol": { "agent": "claude" },
-      "methods-review": { "agent": "claude" },
+      "methods-review": { "agent": "claude", "model": "opus" },
       "prepare": { "agent": "claude" },
       "analysis": { "agent": "claude" },
-      "results": { "agent": "claude" },
       "brief": { "agent": "claude" },
-      "write": { "agent": "opencode" },
-      "prose-review": { "agent": "claude" }
+      "write": { "agent": "opencode", "model": "opencode/deepseek-v4.1-flash-free" },
+      "prose-review": { "agent": "claude", "model": "opus" }
     },
     "no_jira_steps": true,
     "bootstrap": "flock ~/.TinyTeX.lock sh -c 'command -v latexmk >/dev/null && exit 0; t=~/.TinyTeX/bin/x86_64-linux; if [ ! -e ~/.TinyTeX ]; then rm -rf ~/.TinyTeX.part && mkdir -p ~/.TinyTeX.part ~/.local/bin && curl -fsSL https://github.com/rstudio/tinytex-releases/releases/download/daily/TinyTeX-2-linux-x86_64.tar.xz | tar -xJ -C ~/.TinyTeX.part && mv ~/.TinyTeX.part/.TinyTeX ~/.TinyTeX && rmdir ~/.TinyTeX.part || exit 1; fi; [ -x $t/latexmk ] || { echo \"~/.TinyTeX existe pero no tiene latexmk\"; exit 1; }; $t/tlmgr option sys_bin ~/.local/bin && $t/tlmgr path add && bash -lc \"command -v latexmk\" || { echo \"latexmk no queda en el PATH de los trabajos (~/.local/bin)\"; exit 1; }'",
-    "verification": "Changes are paper text, bibliography entries and experiment records, not an application: the repository's own commands check them (its consistency check and the document build), an experiment's results are verified in a record the user reads in Tinto, and a co-author who did not write the change reviews each pull request before it merges. There is no user interface to test."
+    "verification": "Run the repository's consistency check and build the PDF for prose changes. Review the prose against its sources, including the protocol, raw outputs and analysis for experimental claims. A co-author reviews each pull request before merge."
   },
-  "settings_reason": "Para compilar los PDF, la primera tarea instala TeX Live completo (TinyTeX, de github.com/rstudio/tinytex-releases) en ~/.TinyTeX de tu WSL, sin permisos de administrador: unos 1,8 GB de descarga, 5 GB en disco y unos 10 minutos, una sola vez. Las tareas siguientes lo encuentran ya instalado. Además, Claude hace la investigación, los protocolos, los análisis y las revisiones, un modelo de OpenCode redacta las secciones, y cada entrega termina en el merge, sin pasos de Jira."
+  "settings_reason": "DeepSeek redacta mediante OpenCode y Claude Opus revisa. Puedes cambiar los modelos por etapa. Las tareas del plan del artículo terminan al fusionar el PR. Para compilar el PDF, la primera tarea instala TinyTeX en ~/.TinyTeX en Linux x86_64 o WSL, sin permisos de administrador. Descarga unos 1,8 GB, ocupa unos 5 GB y tarda unos 10 minutos."
 }

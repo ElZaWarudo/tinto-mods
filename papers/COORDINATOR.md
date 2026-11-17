@@ -1,19 +1,19 @@
 # Papers: coordinator guide
 
-You coordinate a Delivery batch on a repository of academic papers. Every
-task follows one of the mod's four flows (`create_task` `flow`) and ends in
-one pull request a co-author reviews:
+Start from the researcher's choice in **Flujo de Papers** on Tinto's
+coordinator start form. Use the corresponding `create_task` `flow` for
+each new task. Each task produces one pull request a co-author reviews.
 
-| Flow | Stages, in order (who runs them) | Its pull request carries |
+| Choice | `flow` and stages | Its pull request carries |
 |---|---|---|
-| `research` | `sources` (Claude, web) → `sources-review` (Claude, web) | bibliography entries, one line per reference |
-| `protocol` | `protocol` (Claude) → `methods-review` (Claude) → **the user approves the reviewed essentials** | a preregistered experiment protocol |
-| `experiment` | `prepare` (Claude) → `run` (Tinto runs a command) → `analysis` (Claude) → `results` (Claude, a record the user reads) | raw results, analysis, the experiment marked complete |
-| `section` | `brief` (Claude) → **the user approves what will be written** → `write` (OpenCode, a cheap model) → `prose-review` (Claude) | prose |
+| Redacción | `section` · `brief` → `write` → `prose-review` | a section or revision |
+| Experimento y redacción | `experiment` · `prepare` → `run` → `analysis` → `brief` → `write` → `prose-review` | raw results, reproducible analysis and a written section or results report |
+| Protocolo | `protocol` · `protocol` → `methods-review` → researcher approval | a preregistered experiment protocol |
+| Investigación de fuentes | `research` · `sources` → `sources-review` | verified bibliography entries |
 
-Claude does all the thinking. The cheap model only turns an approved brief
-into prose, so it can be swapped without changing anything else. Nothing is
-invented, and nothing already recorded is rewritten.
+Claude scopes the work with a brief grounded in evidence, OpenCode runs
+the selected writer model, and Claude Opus reviews by default. Tinto runs
+the repository's checks and handles the PR.
 
 This guide sits on top of Tinto's coordinator instructions and tool
 descriptions: where they say how a tool works, they win. `MOD` is the
@@ -35,14 +35,9 @@ The researcher reads everything you send. Do not saturate them.
   ask what `read_settings` or the repository answers; decide yourself what
   has a sound default (wording, paragraph order, file names).
 - **Checkpoints** are one blocking `text` decision with `waits_for_user:
-  true`, of at most 15 lines: a numbered list of at most 7 one-line items,
-  one line of counts, at most 3 lines of gaps, one line on what approving
-  does. Only three things are checkpoints: what a section will say (5.4),
-  a protocol's reviewed essentials (5.2), and a deviation that changes a
-  hypothesis, measure or analysis plan (5.3). Nothing else gets
-  `waits_for_user`: everything else keeps moving.
-- **Records** (the `results` stage) open with the verdict and a summary of at
-  most three lines.
+  true`, of at most 15 lines. Use them for the reviewed essentials of a
+  protocol (5.2) and for a deviation that changes a hypothesis, measure or
+  analysis plan (5.3).
 - **No status chatter.** Tinto shows progress. Write in the conversation only
   what no decision, approval or record can carry, in at most three lines,
   then `call_user` once.
@@ -52,10 +47,15 @@ The researcher reads everything you send. Do not saturate them.
 
 ## 2. Intake: the repository's rules win
 
-Your first message carries, after Tinto's hand-over paragraph, one line per
-answered start question: `Artículo: <path>` (the chosen paper manifest,
-repo-relative), `Qué quieres hacer: <one of the four goals>` and, if given,
-`Algo que deba saber: <note>`. Before creating anything:
+Your first message carries one line per answered start question after
+Tinto's hand-over paragraph. Map `Flujo de Papers` to the exact flow in
+the table, use `Artículo` to locate the paper manifest, and use the optional
+`Encargo` to identify the section, experiment, subject or Jira issue that
+supplies the work. `Modelo de redacción (OpenCode, provider/model)` is an
+optional override for this batch. If a conversation already named a flow,
+use that choice when starting without form answers. If no flow is clear,
+ask before creating tasks. For an existing task, keep its saved flow
+and stage sequence when resuming.
 
 1. Read the repository's `AGENTS.md` (and `CLAUDE.md`), `README.md`, every
    procedure they point to (skills, templates, schemas, the pull request
@@ -84,18 +84,20 @@ repo-relative), `Qué quieres hacer: <one of the four goals>` and, if given,
    Follow it and tell the user in one line.
 4. `read_settings`, then propose what is missing in one `propose_settings`
    during the brainstorm:
-   - `checks_add`: the repository's check command and this paper's build,
+   - `checks_add`: the repository's check command and, when the task changes
+     the manuscript or has a document build, that document's build,
      exactly as the repository runs them (for example `make check`,
      `make p02`); `setup_add`: the install the check needs, adapted to the
      system the jobs run on (`python3` where there is no `python`).
-   - The mod's own settings (`stages` by stage id, `no_jira_steps`, the
-     LaTeX `bootstrap`) come as a proposal when the user picks the mod. If
-     `read_settings` shows they are not in force, tell the user once, in one
-     line, and until then pass `agent` on every dispatch: `claude`, or
-     `opencode` with `model` for `write`.
-   - The writer's model: never choose it. Use the one set for `write`, or ask
-     the user once which of their OpenCode models writes and propose it for
-     `write` with `propose_settings` `stages`.
+   - The launch model override applies to `write` only. Pass
+     `agent: "opencode"` and that `model` on each writer dispatch. With no
+     override, use the repository's stage settings. If the stage is unset,
+     dispatch with the agent and model from `MOD/mod.json`. If the stage
+     uses the same agent as the mod but has no model set, pass the mod's
+     model when it names one. This also covers settings from older Papers
+     versions. If OpenCode rejects the model, ask for an available
+     `provider/model` and resume at `write`.
+   - Check the issue source before proposing `no_jira_steps` (section 7).
 5. **LaTeX needs Linux.** The bootstrap installs TinyTeX for Linux x86_64. If
    the repository is not in WSL or on Linux (its path in `read_settings`),
    tell the user in one line that the PDF cannot be built until it is, and
@@ -106,14 +108,16 @@ repo-relative), `Qué quieres hacer: <one of the four goals>` and, if given,
 
 ## 3. Cutting the work into tasks
 
-From the user's goal and the paper's plan (`next_action`, `blockers`,
-`experiments`), propose the tasks in a few lines; create them once the user
-agrees. One task is one pull request:
+Use the selected flow, the request and the paper's plan (`next_action`,
+`blockers`, `experiments`) to identify the work. Create a task directly
+when the target is clear. Ask when there are several plausible targets or
+the work needs a split that changes what the user asked for.
 
 - `research`: the sources one section or one topic needs.
-- `protocol`: one experiment's preregistration. `experiment`: that
-  experiment's run, created with its protocol's task, or alone when the
-  protocol is already merged.
+- `protocol`: one experiment's preregistration.
+- `experiment`: one preregistered experiment and the prose it supports.
+  When a protocol task already exists, block the experiment on its merge.
+  When it still needs to be designed, ask the user to start with Protocolo.
 - `section`: one section, or one coherent revision. Never two papers in one
   task, never one section across tasks.
 
@@ -122,7 +126,7 @@ Keys are the paper's id plus a slug (`P02-threat-model`, `P02-bench-protocol`,
 
 **Order.** A task waits for what it uses, with `set_task_blocked`
 `{"type": "task", "task": "<key>", "until": "merged"}`: an experiment for its
-protocol; a section for the research and experiments its claims need; the
+protocol, or a section for evidence from other tasks; the
 abstract, introduction, discussion and conclusion for the sections they
 summarise; two tasks that edit the same file, one for the other. When a
 blocked task unblocks, request a `sync` before its first stage so its branch
@@ -137,17 +141,15 @@ produce is not created: tell the user what it waits on.
 - `create_task` with `flow`, `branch`, `write_paths` and `repos` (per flow,
   below). Give jobs each checkout's `path` as the task's `repos` shows it;
   never assume it.
-- `set_task_state` with `checks` (the repository's check, plus the paper's
-  build for a `section`), `setup` when the check needs it, and for a
-  `section` `documents`: the PDF the build produces, so the user can open
-  each version in Tinto.
+- `set_task_state` with the repository's `checks` and any `setup` they
+  need. For prose, also set the document build in `checks` and its PDF in
+  `documents` when the deliverable has a build.
 - Every assignment opens with "Read and follow `MOD/stages/<file>.md`,
   section `<stage>`." (absolute path), then the task, then the intake notes.
   Never your own summary of the evidence, never "run the checks" (Tinto runs
   them), never permission to touch a file outside `write_paths`.
-- The flow gives each task's `next_stage`. Work a review, a record or a
-  failing check sends back goes to the stage that writes before it; the
-  exceptions are below.
+- The flow gives each task's `next_stage`. Route findings as described
+  below, and use the task's flow for subsequent stages.
 - After **three** rounds on a task without a pass, stop and ask the user.
 
 ## 5. The flows
@@ -213,9 +215,11 @@ is in `read_settings` `qa_commands` (else propose it as in 5.2 step 4).
 
 | Before dispatching | `write_paths` (`EXP` is the experiment's folder) |
 |---|---|
-| `prepare`, `analysis` | `EXP`'s manifest, protocol and run entry point, `EXP/analysis/**`, the paper's manifest |
+| `prepare` | `EXP`'s manifest, protocol and run entry point |
 | `run` | `EXP/results/**` |
-| the commit | both lists |
+| `analysis` | `EXP`'s manifest, `EXP/analysis/**`, and the paper's manifest if required |
+| `write` | the brief's Target files |
+| the commit | the combined lists |
 
 1. `prepare` (guide `stages/experiment.md`): the experiment's folder and the
    code repository's path, commit and role.
@@ -224,68 +228,63 @@ is in `read_settings` `qa_commands` (else propose it as in 5.2 step 4).
    half (at most 1440). Tinto runs it; no agent touches its output. If it
    fails, read `job_log`: a missing tool or service is the user's (one
    line); anything else goes to `prepare` as a deviation.
-3. `analysis`: the run folder to analyse.
-4. `results`: the experiment's folder and the run folder. It writes the
-   record the user reads in Tinto, one section per hypothesis.
+3. `analysis` (guide `stages/experiment.md`): the run folder to analyse.
+   Use its successful handoff to give `brief` the protocol, exact run folder,
+   completed manifest and analysis outputs in the same worktree. Treat any
+   missing or inconsistent output as an experiment issue before scoping prose.
+4. Continue with the shared prose stages in 5.4. Give `brief` the manuscript
+   section or results report named in the request or paper plan. Use the
+   repository's report convention when there is no manuscript target, or
+   `EXP/analysis/results.md` when the repository has no convention. Cover
+   each hypothesis, its result against the criterion, and any deviations.
 
-**Changes never rewrite history.** A problem the user reports on the record,
-or one the record found, is one of two kinds:
+Route an editorial finding to `write`, or to `brief` if it changes the
+scope. Route an incorrect computation or figure back to `analysis` and
+refresh the brief before the prose is revised and reviewed. For a methodology
+error or a change to the experiment, dispatch `prepare` to document the
+deviation, then `run` in a new run folder. Earlier runs stay untouched.
+If the deviation changes a hypothesis, a measure or the analysis plan,
+get the checkpoint from 5.2 after `prepare` and before `run`. Repeat the
+downstream stages with the new evidence. Apply the same routing to findings
+from the co-author and use 5.3's write paths for each dispatched stage.
 
-- **A presentation or analysis error** that leaves the protocol as it is (a
-  wrong axis, a miscomputed mean): `analysis` fixes it (Tinto's default).
-- **A methodology error, or a change to the experiment** (another sample, a
-  measure, a corrected procedure): dispatch `prepare` with it. It records a
-  dated deviation in the protocol and adjusts what the deviation needs; then
-  `run` writes a **new** run folder, and `analysis` and `results` follow.
-  Earlier runs stay untouched. When the deviation changes a hypothesis, a
-  measure or the analysis plan, it is a checkpoint (like 5.2's) after
-  `prepare` and before `run`.
+The pull request includes the prose and its underlying evidence together.
+Add one line per hypothesis with the observed value and whether it met the
+criterion, and list the deviations.
 
-Mark sent problems `fixing` (`update_qa_problems`) once their stage is
-dispatched. The pull request body adds one line per hypothesis (criterion
-met or not, with its number) and the deviations.
+Existing tasks whose saved flow ends in `results` finish that stage using
+`stages/experiment.md` and Claude when there is no stage setting. To write
+prose from such a run after it merges, start a Redacción task with the run
+as evidence.
 
-### 5.4 `section`
+### 5.4 Shared prose stages
 
-`write_paths`: the brief's Target files (and the paper's manifest when the
-brief sets a field in it); set them once the brief exists. `documents`: the
-paper's PDF. `repos`: when the section describes software, the code
-repositories the paper's manifest pins, at those commits (role: "code the
-paper describes"), so claims about it are checked against that code.
+For `section`, attach the code repositories the paper describes at the
+commits its manifest pins. For `experiment`, use the run and analysis from
+the preceding stages of the same task. For either flow, set `write_paths`
+from the brief's Target files before `write`. Include the paper's manifest
+only when the brief assigns a change to it. Expose the PDF in `documents`
+when the prose is part of a document the repository builds.
 
-1. `brief` (guide `stages/brief.md`): the section or revision, the paper and
-   its manifest, the intake notes, and for a revision what must change and
-   why, with paths and lines. Its `handoff` is the brief: save it verbatim as
+1. `brief` (guide `stages/brief.md`): the section, revision or report, the
+   paper and its manifest, the intake notes, and for a revision what must
+   change and why, with paths and lines. Its `handoff` is the brief: save it as
    `.agent/papers/<KEY>/brief.md`; if a template section is missing, dispatch
    `brief` again naming it. Record `set_task_state` `plan` from it (`what`
    from Task, `places` from Target, `risks` from Gaps, `out_of_scope` from
-   Forbidden). Its `findings` are questions (section 6): ask them first, and
-   brief again if an answer changes it.
-2. **Checkpoint** before the writer. For example:
-
-   ```
-   Qué dirá «Modelo de amenazas» (P02):
-   1. Limita el adversario cuántico a las capas de evidencia, no al consenso.
-   2. Clasifica las cuatro capas según sobrevivan o no (C2).
-   3. Señala la firma de anclaje como la capa más expuesta.
-   Autoriza 4 afirmaciones, 1 resultado y 3 citas.
-   Huecos (quedan como \todo): el coste de ML-DSA, que espera a EXP-P02-bench.
-   Si lo apruebas tal cual, el redactor escribe con esto; si cambias algo, el encargo se rehace antes.
-   ```
-
-   The items come from the brief's Argument, the counts from its tables, the
-   gaps from its Gaps; the whole brief goes in `detail`. The writer is not
-   dispatched until it is answered. An answer that changes anything sends it
-   back to `brief` with the answer: save the new brief, record the plan with
-   `plan_reason`, and ask again.
-3. `write`: the **full text of `MOD/stages/write.md` pasted in** (a cheap
+   Forbidden), with `plan_reason` when replacing an existing plan. Resolve
+   any questions from `findings` (section 6) before dispatching the writer.
+   Update the brief if answers change it.
+2. `write`: the **full text of `MOD/stages/write.md` pasted in** (a cheap
    model follows its prompt better than a file) and the brief's absolute
    path. Nothing else of yours: if something is missing, fix the brief. In a
    round add one line: "Address only the round's items; change nothing
    else."
-4. `prose-review` (guide `stages/review.md`): the brief's path and the
-   intake notes. Findings go back to `write`; one that starts with "Brief:"
-   goes to `brief` first (new brief, new checkpoint), then `write`.
+3. `prose-review` (guide `stages/review.md`): the brief's path and the
+   intake notes, plus the protocol, raw run and analysis paths for an
+   experiment. Findings go back to `write`; one that starts with "Brief:"
+   goes to `brief` first, then `write`. Findings about the experiment itself
+   follow 5.3.
 
 Changes a co-author asks for on the pull request go to `write`, or to `brief`
 first when they change what the section claims.
@@ -309,13 +308,17 @@ Ask, as section 1 says, when:
 
 ## 7. Delivery
 
-There is no issue tracker: with `no_jira_steps` a task is delivered at its
-merge. If a task's `next_step` is a Jira step, the settings are not approved
-yet: say so in one line.
+For work taken from the article plan or requested directly, use
+`no_jira_steps: true` so the merge completes delivery. If missing, include
+it in the settings proposal. Only use Jira when the user gives a Jira issue
+as the work source. Keep its issue key and follow Tinto's Jira steps for
+that task. If `no_jira_steps` is active for a Jira-sourced batch, propose
+`false` during intake. Tinto applies this setting to the whole repository,
+so flag the impact if other batches in it are still delivering.
 
 1. **Commit** once the last stage passed and the checks pass, in the
-   repository's convention. Briefs never go in (they live in
-   `.agent/`), nor does `.tinto-repos/`.
+   repository's convention. For experiments, restore the combined write
+   paths before committing. Briefs stay in `.agent/`.
 2. **Push**, then **PR**: the repository's template, filled for this task,
    plus what section 5 adds per flow. Never mention briefs, stages, models
    or Delivery: the pull request is about the paper. The user picks the
@@ -325,15 +328,14 @@ yet: say so in one line.
 4. **Archive** the task once delivered.
 
 When the repository's rules say a delivered task moves the paper on, the
-task's last writing stage updates the manifest's plan fields: name the exact
-fields and values in its assignment (for a `section`, in the brief's
-Manifest line).
+task's last writing stage updates the manifest's plan fields. For prose,
+give the exact fields and values in the brief's Manifest line.
 
 ## 8. Comparing writer models
 
 Only when the user asks and names the models (`provider/model`, as
 `opencode models` lists them). One task per model, keys `<KEY>-<model-slug>`,
-the same brief saved in each task's folder and one checkpoint for all. Run
+the same brief saved in each task's folder. Run
 `brief` on the first task; on the others, so their flow counts it, dispatch
 `brief` with "Return the brief at `<path>` verbatim as your handoff; change
 nothing." Each `write` gets `agent: "opencode"` and

@@ -1,8 +1,9 @@
-# Stages: run and record an experiment
+# Stages: prepare, run and analyse an experiment
 
-Three stages run by agents; between `prepare` and `analysis`, Tinto runs the
-experiment's command itself. Read the section for yours. The repository's
-rules (its `AGENTS.md`, its experiment procedure) win over this guide.
+Tinto runs the experiment's command between `prepare` and `analysis`.
+After a successful analysis, the shared prose stages turn the evidence
+into a section or a results report. The repository's experiment procedure
+and `AGENTS.md` win over this guide.
 
 Always:
 
@@ -15,13 +16,14 @@ Always:
 
 1. Check that the protocol is merged on the base with the repository's
    preregistered status (or later), and that its run entry point exists and
-   does what the protocol says. If not, stop with a finding.
+   does what the protocol says. If a prerequisite is missing, return
+   `blocked` with what needs to be fixed before execution.
 2. Set the manifest's status to the one the repository uses for a running
    experiment, and its source commit to the code repository's full commit.
 3. **In a round with a deviation** (a methodology error, a change the user
    asked for): add one entry under the protocol's Deviations, dated today:
-   what changes, why, who asked (the user's report or the record's problem
-   by its label), and what it affects (run, measures, analysis). Then make
+   what changes, why, who reported the issue and what it affects
+   (run, measures, analysis). Then make
    only the change the deviation needs (the run entry point, a parameter).
    Never edit the protocol's other sections; never touch earlier runs.
 4. Do not run the experiment.
@@ -30,7 +32,7 @@ Always:
 
 1. Read the protocol (with its Deviations) and the run folder the assignment
    names. Check that the run wrote every raw output the protocol declares and
-   its environment record. If not, stop with a finding.
+   its environment record. Return `blocked` and name any missing outputs.
 2. Write the analysis as scripts in the experiment's `analysis/` folder,
    exactly as the protocol's analysis plan says. Each script names its input
    files (in the run folder) and writes its figures and tables into
@@ -42,8 +44,14 @@ Always:
    the status the repository uses for a complete experiment once every
    declared output exists. Set the paper manifest's fields the assignment
    names.
+5. In `handoff`, give paths to the protocol, exact raw run, experiment
+   manifest, analysis scripts and their outputs. For each hypothesis,
+   include the observed value with units, its uncertainty when the
+   protocol calls for it, and whether it meets the criterion. List
+   deviations and separate any exploratory outputs. The brief and review
+   will open the evidence themselves.
 
-## `results`: the record
+## `results`: record for tasks created with the earlier flow
 
 You change nothing in the worktree. You write one record, `<KEY>.md`, in
 your QA folder, by Tinto's QA record guide for "a record not about a UI".

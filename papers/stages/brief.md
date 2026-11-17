@@ -1,6 +1,6 @@
 # Stage: `brief`
 
-You write the brief for one section, or one revision, of an academic paper.
+You write the brief for one section, revision or experiment results report.
 Another, cheaper model will write the prose from your brief and nothing else.
 It cannot ask you questions and it will not read the repository's rules: what
 the brief does not authorise, it must not write. A reviewer will then check
@@ -26,6 +26,13 @@ You change nothing: no file in the worktree or outside it. Your result's
    bibliography and, where the repository keeps one, its audit trail. You
    have no web access: you cannot check a source that is not in the
    repository.
+6. When the assignment comes from an experiment task, read the protocol,
+   the completed experiment manifest, the exact raw run and the analysis
+   outputs in this worktree. Scope the results against each hypothesis's
+   criterion, including uncertainty, recorded deviations and limitations
+   where they matter. Label exploratory results as such. Keep the report
+   or section bound to this run, and keep the raw files and analysis
+   scripts out of Target.
 
 ## 2. Decide
 

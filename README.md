@@ -40,7 +40,33 @@ Complementos says so and you update it.
 
 | Mod | What it does |
 |---|---|
-| [`papers`](papers/) | Takes an academic paper from its sources to its PDF, in four flows. **Research**: Claude finds and verifies sources on the web and writes the bibliography entries. **Protocol**: Claude designs and writes an experiment's protocol, an independent methodology review checks it, and you approve its essentials before it is preregistered. **Experiment**: Tinto runs it on the code repository at a pinned commit, Claude analyses it, and you read the results per hypothesis in a record where you can report problems; a correction is a new run, never an edit. **Section**: Claude writes a brief, you see what will be written, a cheap OpenCode model writes it and Claude reviews it; you open each version of the PDF in Tinto. Each task ends in a pull request a co-author reviews. It installs LaTeX (TinyTeX) by itself in WSL. |
+| [`papers`](papers/) | Research, preregister, run experiments and write academic papers. |
+
+### Start a Papers batch
+
+Choose **Papers** under **Delivery → Ajustes del repositorio → Mod** for
+the paper repository. Apply the suggested settings for models and LaTeX as
+needed. Create a **Nuevo lote** for that repository and open its
+**Coordinador**. Pick a **Flujo de Papers** and the **Artículo**, then
+select **Iniciar coordinador**. Use **Encargo** to specify the section,
+experiment or subject when the paper plan leaves it open.
+
+| Flujo de Papers | Stages and output |
+|---|---|
+| Redacción | Alcance → Redacción → Revisión editorial. Produces a manuscript section or revision. |
+| Experimento y redacción | Preparación → Ejecución → Análisis, then the Redacción stages. Produces evidence and a manuscript section or results report in the same PR. Start here once the protocol has been preregistered. |
+| Protocolo | Protocolo → Revisión metodológica. You approve the reviewed protocol for preregistration. |
+| Investigación de fuentes | Fuentes → Revisión de fuentes. Produces verified bibliography entries. |
+
+DeepSeek through OpenCode writes by default and Claude Opus reviews. Enter
+an OpenCode `provider/model` in **Modelo de redacción** for one batch, or
+change the Redacción stage in the repository settings for future batches.
+Papers runs the repository's checks and builds the PDF when the manuscript
+changes. The PR merge completes tasks from the paper plan. Jira steps
+apply when the task comes from a Jira issue.
+
+The start form appears for a fresh batch on a repository using Papers in
+Tinto 2.1 or later.
 
 ## Building your own mod
 

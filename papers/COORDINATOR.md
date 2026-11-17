@@ -7,7 +7,7 @@ one pull request a co-author reviews:
 | Flow | Stages, in order (who runs them) | Its pull request carries |
 |---|---|---|
 | `research` | `sources` (Claude, web) → `sources-review` (Claude, web) | bibliography entries, one line per reference |
-| `protocol` | `design` (Claude) → **the user approves the essentials** → `protocol` (Claude) → `methods-review` (Claude) | a preregistered experiment protocol |
+| `protocol` | `protocol` (Claude) → `methods-review` (Claude) → **the user approves the reviewed essentials** | a preregistered experiment protocol |
 | `experiment` | `prepare` (Claude) → `run` (Tinto runs a command) → `analysis` (Claude) → `results` (Claude, a record the user reads) | raw results, analysis, the experiment marked complete |
 | `section` | `brief` (Claude) → **the user approves what will be written** → `write` (OpenCode, a cheap model) → `prose-review` (Claude) | prose |
 
@@ -34,11 +34,13 @@ The researcher reads everything you send. Do not saturate them.
   `request_decisions` per task, at most three blocking ones per task. Never
   ask what `read_settings` or the repository answers; decide yourself what
   has a sound default (wording, paragraph order, file names).
-- **Checkpoints** (5.2 and 5.4) are one `text` decision of at most 15 lines:
-  a numbered list of at most 7 one-line items, one line of counts, at most 3
-  lines of gaps, one line on what approving does. Past the brainstorm Tinto
-  answers decisions itself as proposed, so ask each checkpoint while the
-  brainstorm lasts whenever the order of work allows it.
+- **Checkpoints** are one blocking `text` decision with `waits_for_user:
+  true`, of at most 15 lines: a numbered list of at most 7 one-line items,
+  one line of counts, at most 3 lines of gaps, one line on what approving
+  does. Only three things are checkpoints: what a section will say (5.4),
+  a protocol's reviewed essentials (5.2), and a deviation that changes a
+  hypothesis, measure or analysis plan (5.3). Nothing else gets
+  `waits_for_user`: everything else keeps moving.
 - **Records** (the `results` stage) open with the verdict and a summary of at
   most three lines.
 - **No status chatter.** Tinto shows progress. Write in the conversation only
@@ -50,14 +52,17 @@ The researcher reads everything you send. Do not saturate them.
 
 ## 2. Intake: the repository's rules win
 
-The batch opens with the user's start answers (`Artículo`, `Qué quieres
-hacer`, `Algo que deba saber`). Before creating anything:
+Your first message carries, after Tinto's hand-over paragraph, one line per
+answered start question: `Artículo: <path>` (the chosen paper manifest,
+repo-relative), `Qué quieres hacer: <one of the four goals>` and, if given,
+`Algo que deba saber: <note>`. Before creating anything:
 
 1. Read the repository's `AGENTS.md` (and `CLAUDE.md`), `README.md`, every
    procedure they point to (skills, templates, schemas, the pull request
    template), its build file, and for the chosen paper its own guide, its
-   manifest (for example `paper.yaml`) and its plan. If the `Artículo` answer
-   is empty or not a paper manifest, find the paper from the note or ask.
+   manifest and its plan. When the `Artículo` line is not a path to a paper
+   manifest (no file matched, so the user typed it), find the paper whose id
+   or title it names; if none or several match, ask in one `choice`.
 2. Write down the repository's answers to these. They are the **intake
    notes** you copy into every assignment:
    - the paper's files, and the files nobody may edit (raw results, other
@@ -128,9 +133,10 @@ produce is not created: tell the user what it waits on.
 
 - Before `create_task`, create the empty folder
   `<main checkout>/.agent/papers/<KEY>/` and pass it in `read_dirs`: it holds
-  the brief or the design you store.
-- `create_task` with `flow`, `branch`, `write_paths` (per flow, below) and,
-  for an experiment, `repos`.
+  the brief you store.
+- `create_task` with `flow`, `branch`, `write_paths` and `repos` (per flow,
+  below). Give jobs each checkout's `path` as the task's `repos` shows it;
+  never assume it.
 - `set_task_state` with `checks` (the repository's check, plus the paper's
   build for a `section`), `setup` when the check needs it, and for a
   `section` `documents`: the PDF the build produces, so the user can open
@@ -161,15 +167,18 @@ line per reference, verified / corrected (what changed) / removed (why).
 
 `write_paths`: the experiment's folder (for example
 `research/experiments/EXP-P02-bench/**`) and the paper's manifest. `repos`:
-the code repository at the commit the paper's manifest pins, so the design
-reads the code it will run.
+the code repository at the commit the paper's manifest pins, so the protocol
+is designed on the code it will run.
 
-1. `design` (guide `stages/protocol.md`): the experiment's question and the
-   code repository it will run on. Its `handoff` is the design: save it
-   verbatim as `.agent/papers/<KEY>/design.md`. Its `findings` are questions
-   for the user (section 6).
-2. **Checkpoint.** One blocking `text` decision made of the design's
-   "Essentials", the whole design in `detail`. For example:
+1. `protocol` (guide `stages/protocol.md`): the experiment's question and
+   the code repository's checkout path (from the task's `repos`). It designs
+   the experiment, fills the repository's template, writes the run entry
+   point and lists the experiment in the paper's manifest. Its `handoff` is
+   the Essentials plus any Questions for the user: ask those (section 6)
+   while the review runs.
+2. `methods-review`: the same inputs. Findings go back to `protocol`.
+3. **Checkpoint**, once the review passed: the Essentials from its
+   `handoff`, the protocol's path in `detail`. For example:
 
    ```
    Experimento EXP-P02-bench, para la RQ2 de P02:
@@ -179,18 +188,12 @@ reads the code it will run.
    4. Análisis: mediana con IC bootstrap; ninguna otra prueba.
    5. Se detiene tras 3 ejecuciones fallidas seguidas.
    Comando: make -C research/experiments/EXP-P02-bench run (unas 2 h).
-   Si lo apruebas tal cual, se redacta el protocolo; si cambias algo, se rehace el diseño.
+   Si lo apruebas tal cual, se abre el PR; si cambias algo, se rehace el protocolo y se revisa otra vez.
    ```
 
-   An answer that changes anything sends it back to `design` with the
-   answer; save the new design and ask again.
-3. `protocol`: the path of the approved design. It fills the repository's
-   template, writes the run entry point, and lists the experiment in the
-   paper's manifest.
-4. `methods-review`: the design's path. Findings go back to `protocol`; one
-   that starts with "Design:" goes back to `design`, and its new essentials
-   are asked again.
-5. Propose the run command now, so the user approves it with the protocol:
+   An answer that changes anything sends it back to `protocol` with the
+   answer, then `methods-review`, then this checkpoint again.
+4. Propose the run command with the checkpoint, so the user approves it with the protocol:
    `propose_settings` `qa_commands_add`, exactly as the protocol writes it.
    A command stage runs only a command of the repo's settings, and those may
    not run a script by relative path, name an absolute path or use `..`:
@@ -204,8 +207,7 @@ any run.
 Create it with `repos`: `[{"repo": "<code repository>", "commit": "<the full
 commit the protocol pins>", "role": "code the experiment runs"}]`. Before
 `prepare`, check that the protocol is merged on the base and its run command
-is in `read_settings` `qa_commands` (else propose it as in 5.2 step 5, during
-the brainstorm).
+is in `read_settings` `qa_commands` (else propose it as in 5.2 step 4).
 
 `write_paths` follow the stage, so only Tinto's run writes raw results:
 
@@ -236,7 +238,8 @@ or one the record found, is one of two kinds:
   dated deviation in the protocol and adjusts what the deviation needs; then
   `run` writes a **new** run folder, and `analysis` and `results` follow.
   Earlier runs stay untouched. When the deviation changes a hypothesis, a
-  measure or a criterion, ask the user first with a checkpoint like 5.2's.
+  measure or the analysis plan, it is a checkpoint (like 5.2's) after
+  `prepare` and before `run`.
 
 Mark sent problems `fixing` (`update_qa_problems`) once their stage is
 dispatched. The pull request body adds one line per hypothesis (criterion
@@ -258,8 +261,7 @@ paper describes"), so claims about it are checked against that code.
    from Task, `places` from Target, `risks` from Gaps, `out_of_scope` from
    Forbidden). Its `findings` are questions (section 6): ask them first, and
    brief again if an answer changes it.
-2. **Checkpoint.** One blocking `text` decision before the writer. For
-   example:
+2. **Checkpoint** before the writer. For example:
 
    ```
    Qué dirá «Modelo de amenazas» (P02):
@@ -312,7 +314,7 @@ merge. If a task's `next_step` is a Jira step, the settings are not approved
 yet: say so in one line.
 
 1. **Commit** once the last stage passed and the checks pass, in the
-   repository's convention. Briefs and designs never go in (they live in
+   repository's convention. Briefs never go in (they live in
    `.agent/`), nor does `.tinto-repos/`.
 2. **Push**, then **PR**: the repository's template, filled for this task,
    plus what section 5 adds per flow. Never mention briefs, stages, models

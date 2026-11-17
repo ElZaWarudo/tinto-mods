@@ -9,7 +9,6 @@
   "stages": {
     "sources": { "label": "Fuentes", "as": "implementation", "web": true },
     "sources-review": { "label": "Revisión de fuentes", "as": "review", "web": true },
-    "design": { "label": "Diseño", "as": "explore" },
     "protocol": { "label": "Protocolo", "as": "implementation" },
     "methods-review": { "label": "Revisión metodológica", "as": "review" },
     "prepare": { "label": "Preparación", "as": "implementation" },
@@ -22,7 +21,7 @@
   },
   "flows": {
     "research": { "label": "Investigación", "stages": ["sources", "sources-review"] },
-    "protocol": { "label": "Protocolo", "stages": ["design", "protocol", "methods-review"] },
+    "protocol": { "label": "Protocolo", "stages": ["protocol", "methods-review"] },
     "experiment": { "label": "Experimento", "stages": ["prepare", "run", "analysis", "results"] },
     "section": { "label": "Sección", "stages": ["brief", "write", "prose-review"] }
   },
@@ -44,7 +43,6 @@
     "stages": {
       "sources": { "agent": "claude" },
       "sources-review": { "agent": "claude" },
-      "design": { "agent": "claude" },
       "protocol": { "agent": "claude" },
       "methods-review": { "agent": "claude" },
       "prepare": { "agent": "claude" },

@@ -40,7 +40,7 @@ Complementos says so and you update it.
 
 | Mod | What it does |
 |---|---|
-| [`papers`](papers/) | Takes an academic paper from its sources to its PDF, in four flows. **Research**: Claude finds and verifies sources on the web and writes the bibliography entries. **Protocol**: Claude designs an experiment, you approve its essentials, and it is preregistered after an independent methodology review. **Experiment**: Tinto runs it on the code repository at a pinned commit, Claude analyses it, and you read the results per hypothesis in a record where you can report problems; a correction is a new run, never an edit. **Section**: Claude writes a brief, you see what will be written, a cheap OpenCode model writes it and Claude reviews it; you open each version of the PDF in Tinto. Each task ends in a pull request a co-author reviews. It installs LaTeX (TinyTeX) by itself in WSL. |
+| [`papers`](papers/) | Takes an academic paper from its sources to its PDF, in four flows. **Research**: Claude finds and verifies sources on the web and writes the bibliography entries. **Protocol**: Claude designs and writes an experiment's protocol, an independent methodology review checks it, and you approve its essentials before it is preregistered. **Experiment**: Tinto runs it on the code repository at a pinned commit, Claude analyses it, and you read the results per hypothesis in a record where you can report problems; a correction is a new run, never an edit. **Section**: Claude writes a brief, you see what will be written, a cheap OpenCode model writes it and Claude reviews it; you open each version of the PDF in Tinto. Each task ends in a pull request a co-author reviews. It installs LaTeX (TinyTeX) by itself in WSL. |
 
 ## Building your own mod
 

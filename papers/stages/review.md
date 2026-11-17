@@ -1,4 +1,4 @@
-# Stage: review the prose
+# Stage: `prose-review`
 
 You review prose a cheaper model wrote from a brief. You change nothing. Your
 findings send the work back for another round, so each one must be a defect
@@ -31,12 +31,14 @@ Go through every item. Each failure is one finding: what is wrong, where
    brief gives it.
 5. Every item of "Gaps" is there as its marker; any other gap marker the
    writer added is explained in its handoff.
-6. The argument follows the brief's order; the length is within range.
+6. The argument follows the brief's order; the length is within range; each
+   "Manifest" field has exactly its value.
 
 **Evidence**
 7. Every value in the prose equals its source file (units, rounding,
    conditions).
-8. Each claim stays within the conditions and the sample of its evidence.
+8. Each claim stays within the conditions and the sample of its evidence; a
+   claim about software holds in the code repository the assignment gives.
    If the brief itself authorised more than the evidence supports, say so
    as a finding that starts with "Brief:", so the coordinator fixes the brief
    rather than the prose.
@@ -63,3 +65,8 @@ status is `pass`.
 
 When the instructions list a round's items, check that each was addressed
 and that the fix changed nothing else. Do not review the rest again.
+
+## Output
+
+- `summary`: one line.
+- `findings`: one line each, a defect only, in the form above; no praise.

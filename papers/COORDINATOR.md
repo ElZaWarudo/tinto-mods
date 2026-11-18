@@ -359,12 +359,18 @@ Ask, as section 1 says, when:
 
 ## 7. Delivery
 
-For `draft`, stop before commit and push. Confirm the PDF appears in
-`delivery_overview` `documents` after Tinto's checks and report the draft
-path, PDF version and editorial verdict to the researcher. Report a missing
-saved version or a failed review separately from a successful build. Keep
-the task and its worktree available for the next revision. Resume delivery
-only if the researcher asks for it.
+A `draft` task delivers a local draft, never a pull request: Tinto offers
+and accepts no commit, push or PR for it. Tinto closes it itself as
+«Borrador listo» once `prose-review` passed on the latest writing, the
+task's checks passed on that same writing and its PDF was saved from it,
+whichever comes last. Until then its phase is `draft_pending` and says what
+is `missing`: run the checks again, or fix why the PDF was not saved. Then
+report the draft path, the PDF version (the task's `draft.versions`) and the
+editorial verdict to the researcher; report a missing saved version or a
+failed review separately from a successful build. The task and its worktree
+stay for the next revision, which a new `write` starts; never archive it.
+If the researcher wants the draft published, create a `section` task for
+it.
 
 For work taken from the article plan or requested directly, use
 `no_jira_steps: true` so the merge completes delivery. If missing, include
@@ -399,8 +405,8 @@ the same brief saved in each task's folder. Run
 nothing." Each `write` gets `agent: "opencode"` and
 its `model`; `prose-review` stays on Claude. Use the same pinned sources,
 document path and build check across the tasks so Tinto can show their PDFs
-in the same history. Run each to a passing review, stop before the commit,
-and report each model's saved version, rounds to pass,
+in the same history. Run each to a passing review (with `draft`, until Tinto
+says the draft is ready; otherwise stop before the commit), and report each model's saved version, rounds to pass,
 unauthorised claims and citations the reviews found, the writer's tokens
 (`usage`) and, if the user gives prices, cost per accepted section. The user
 chooses which task goes on; the others are removed in Tinto.

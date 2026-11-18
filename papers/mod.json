@@ -1,7 +1,7 @@
 {
   "id": "papers",
   "name": "Papers",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Prepara un borrador para revisión, redacta una sección o lleva un experimento preregistrado hasta el manuscrito.",
   "min_tinto": "2.2.0",
   "coordinator": "COORDINATOR.md",
@@ -23,7 +23,7 @@
     "protocol": { "label": "Protocolo", "stages": ["protocol", "methods-review"] },
     "experiment": { "label": "Experimento y redacción", "stages": ["prepare", "run", "analysis", "brief", "write", "prose-review"] },
     "section": { "label": "Redacción", "stages": ["brief", "write", "prose-review"] },
-    "draft": { "label": "Borrador para revisión", "stages": ["brief", "write", "prose-review"] }
+    "draft": { "label": "Borrador para revisión", "stages": ["brief", "write", "prose-review"], "delivers": "draft" }
   },
   "start": [
     {

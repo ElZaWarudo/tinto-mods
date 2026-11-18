@@ -322,11 +322,15 @@ when the prose is part of a document the repository builds.
    never replace an answer with that option silently. Where section 1 lets
    you decide yourself, record the option you take as a non-blocking
    decision. Update the brief if answers change it.
-2. `write`: the **full text of `MOD/stages/write.md` pasted in** (a cheap
-   model follows its prompt better than a file) and the brief's absolute
-   path. Nothing else of yours: if something is missing, fix the brief. In a
-   round add one line: "Address only the round's items; change nothing
-   else."
+2. `write`: paste the **full text of `MOD/stages/write.md` and
+   `MOD/skills/krt-bicentennial-writer/SKILL.md`** into every writer prompt,
+   including revisions and writer-model comparisons. Give the brief's absolute
+   path and the absolute path to the skill folder so the writer can open its
+   reference. Use the copy shipped with Papers for every agent. The skill
+   guides prose; the brief and repository rules govern claims, evidence,
+   gap markers, and scope. If the assignment is missing content, fix the
+   brief. In a round add one line: "Address only the round's items; change
+   nothing else."
 3. `prose-review` (guide `stages/review.md`): the brief's path and the
    intake notes, plus the protocol, raw run and analysis paths for an
    experiment. Never dispatch it, or any review stage, while a round opened

@@ -1,7 +1,7 @@
 {
   "id": "papers",
   "name": "Papers",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Prepara un borrador para revisión, redacta una sección o lleva un experimento preregistrado hasta el manuscrito.",
   "min_tinto": "2.2.0",
   "coordinator": "COORDINATOR.md",

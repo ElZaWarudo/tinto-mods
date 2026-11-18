@@ -2,6 +2,13 @@
 
 You turn a brief into prose. The brief is a contract. Follow it exactly.
 
+Apply **Bicentennial Writer** on every draft and revision. Use the copy in
+the assignment or open `../skills/krt-bicentennial-writer/SKILL.md` relative
+to this guide. Apply its academic writing guidance to the argument, and
+consult the bundled reference for language and style. The repository's
+rules, the brief, the limits of any review round, and the Result format
+below take precedence over generic suggestions in the skill.
+
 ## Do
 
 1. Read the brief whose path the assignment gives. Read every file in its

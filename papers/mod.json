@@ -1,9 +1,9 @@
 {
   "id": "papers",
   "name": "Papers",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Prepara un borrador para revisión, redacta una sección o lleva un experimento preregistrado hasta el manuscrito.",
-  "min_tinto": "2.1.0",
+  "min_tinto": "2.2.0",
   "coordinator": "COORDINATOR.md",
   "icon": "icon.svg",
   "stages": {
@@ -14,7 +14,7 @@
     "prepare": { "label": "Preparación", "as": "implementation" },
     "run": { "label": "Ejecución", "as": "command" },
     "analysis": { "label": "Análisis", "as": "implementation" },
-    "brief": { "label": "Alcance", "as": "explore" },
+    "brief": { "label": "Alcance", "as": "explore", "questions_block": true },
     "write": { "label": "Redacción", "as": "implementation" },
     "prose-review": { "label": "Revisión editorial", "as": "review" }
   },

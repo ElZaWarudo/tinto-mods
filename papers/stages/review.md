@@ -17,7 +17,8 @@ that has to change before this merges.
 ## Checklist
 
 Go through every item. Each failure is one finding: what is wrong, where
-(file:line), and what the brief or the evidence allows instead.
+(file:line), and what the brief or the evidence allows instead. A passing
+build settles none of them.
 
 **Fidelity to the brief**
 1. Only the files and places in "Target" changed.
@@ -43,16 +44,32 @@ Go through every item. Each failure is one finding: what is wrong, where
    as a finding that starts with "Brief:", so the coordinator fixes the brief
    rather than the prose.
 
+**Argument**
+9. The problem leads to each research question, and the question promises
+   no more than the method or experiments the text describes can establish.
+10. The objectives are the work's core lines; a secondary line is marked as
+    such, not listed at the same level.
+11. No capability is presented as existing before the text says whether it
+    exists or is planned; check it against the pinned implementation
+    checkout when one is supplied.
+12. What is claimed as implemented and as planned agrees across sections,
+    this one and those it refers to.
+13. Where the text claims novelty, the cited related work supports the gap
+    and the contributions are explicit.
+
+A failure here that the brief authorised (a question, objective or status
+it fixed) is a "Brief:" finding.
+
 **Citations**
-9. Every citation key exists in the repository's bibliography.
-10. Each citation is used only for what the brief says it supports.
+14. Every citation key exists in the repository's bibliography.
+15. Each citation is used only for what the brief says it supports.
 
 **Coherence and style**
-11. Terms and notation match the brief's "Style" and the neighbouring
+16. Terms and notation match the brief's "Style" and the neighbouring
     sections.
-12. The text reads as one argument: no contradictions, no repetition of
+17. The text reads as one argument: no contradictions, no repetition of
     another section, no orphan references or labels.
-13. The repository's own conventions for this kind of file hold (its
+18. The repository's own conventions for this kind of file hold (its
     `AGENTS.md`).
 
 ## When the prose reports the experiment run in this task
@@ -72,24 +89,16 @@ or procedure so it can send the work to the right stage.
 ## Not findings
 
 Wording you would have chosen differently, when it is correct and within the
-brief, is not a finding: put such notes in `handoff`. With no findings, your
+brief, is not a finding: put such notes in `handoff`. The Argument items are
+findings even when the prose is within the brief. With no findings, your
 status is `pass`.
 
 ## Re-review in a round
 
-When the instructions list a round's items, check that each was addressed
-and that the fix changed nothing else. Do not review the rest again.
-
-## Standalone drafts and chapters
-
-Check that the problem leads to the question and that the question can be
-answered with the proposed evidence. Distinguish core objectives from
-complementary lines. Where an introduction claims novelty, check that the
-cited related work supports the gap and that the proposed contributions are
-explicit. Check current and planned work against the pinned implementation
-checkout when one is supplied. Return a finding for any mismatch, with the
-source and passage. Compilation is a separate Tinto check; its success
-does not settle any of these editorial findings.
+Only when the assignment says this is a re-review in a round and lists the
+round's items: check that each was addressed and that the fix changed
+nothing else. Do not review the rest again. A first review, or an
+assignment that does not say, goes through the whole checklist.
 
 ## Output
 

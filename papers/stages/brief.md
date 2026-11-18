@@ -28,7 +28,8 @@ You change nothing: no file in the worktree or outside it. Your result's
 5. For every citation the section needs: its entry in the repository's
    bibliography and, where the repository keeps one, its audit trail. You
    have no web access: you cannot check a source that is not in the
-   repository.
+   repository. A claim that rests on what a source says, when you cannot
+   open the source, is a gap or a question.
 6. When the assignment comes from an experiment task, read the protocol,
    the completed experiment manifest, the exact raw run and the analysis
    outputs in this worktree. Scope the results against each hypothesis's
@@ -36,9 +37,26 @@ You change nothing: no file in the worktree or outside it. Your result's
    where they matter. Label exploratory results as such. Keep the report
    or section bound to this run, and keep the raw files and analysis
    scripts out of Target.
+7. For a revision, the critique the assignment gives: what must change and
+   why. The current text is text to revise, not a contract, even when no
+   brief preceded it.
 
 ## 2. Decide
 
+- **Check the design first**, before authorising anything, most of all for
+  a revision, an introduction or a problem statement. Each failure is a
+  change in Target or a question:
+  - each research question can be answered by the planned experiments or
+    method as worded; if not, narrow the wording, or ask;
+  - the objectives sit at the level of the work's core lines; a secondary
+    line is marked as such, not listed beside them;
+  - no capability is described before the text says whether it exists or is
+    planned, and what is implemented and what is planned agree across
+    sections.
+- **For a revision, nothing is frozen by default.** The research question,
+  objectives and thesis statement are authorised after that check, changed
+  in Target, or asked about. Keep one unchanged without checking it only
+  when the assignment says so.
 - **Authorise** a claim only when you opened the evidence and it supports the
   claim as you word it, within its conditions and sample. Narrow the wording
   until it does.
@@ -50,8 +68,10 @@ You change nothing: no file in the worktree or outside it. Your result's
 - **Questions** go in `findings`, one per line, in plain language: missing or
   contradictory evidence, a source that is not in the bibliography, two
   readings of the evidence that lead to different claims, anything that
-  needs a research question or result the manifest does not list. Questions
-  are not defects: with none, your status is `pass`.
+  needs a research question or result the manifest does not list, a design
+  failure you cannot fix by narrowing. Each says which option the brief
+  takes meanwhile. Questions are not defects: with none, your status is
+  `pass`.
 
 ## 3. Write the brief
 
@@ -72,8 +92,9 @@ Rules for the brief:
 - Forbidden lists what a writer would be tempted to add: numbers that are not
   in the table, comparisons with other work, future work, adjectives of
   quality ("significant", "novel") that the evidence does not carry.
-- For a revision, Target lists only what changes, and Context files include
-  the current text.
+- For a revision, Target lists only what changes, including any change the
+  design check requires to the question, objectives or thesis statement,
+  and Context files include the current text.
 - Anything else the change needs to build goes in Target with its exact edit
   (for example enabling the bibliography in the paper's main file at its
   first citation), and so do the manifest fields the assignment names.
@@ -134,7 +155,7 @@ Read these; never change them.
 - <What the section needs but cannot have yet, and the exact gap marker text to write in its place.>
 
 ## Manifest
-- <field of the paper's manifest>: <exact new value> (or "None")
+- <field of the paper's manifest>: <exact new value> (or "None": no manifest, or no field changes)
 
 ## Acceptance
 - Every sentence with a claim, result or citation maps to a row above.

@@ -57,9 +57,12 @@ optional override for this batch. If a conversation already named a flow,
 use that choice when starting without form answers. If no flow is clear,
 ask before creating tasks. For an existing task, keep its saved flow
 and stage sequence when resuming.
-For `draft`, `Encargo` can identify a standalone chapter or document with
-no paper manifest. Use its outline and sources in place of the paper plan.
-For other flows, resolve the paper from the selection or the request.
+Work with no paper manifest (a thesis chapter, a standalone document) is
+named in `Encargo`: `draft` for a local draft to review, `section` when it
+goes to a pull request; ask which when the request does not say. Its outline
+and the sources `Encargo` names replace the paper plan, the brief's Manifest
+line is `None`, and the brief lives in `.agent/papers/<KEY>/` as for any
+task. For other flows, resolve the paper from the selection or the request.
 
 1. Read the repository's `AGENTS.md` (and `CLAUDE.md`), `README.md`, every
    procedure they point to (skills, templates, schemas, the pull request
@@ -109,6 +112,14 @@ For other flows, resolve the paper from the selection or the request.
 6. Make sure `.agent/` is ignored in the main checkout: if
    `git check-ignore .agent/x` prints nothing, add `.agent/` to the file
    `git rev-parse --git-path info/exclude` names. Never to a committed file.
+7. **Sources a stage can open.** `brief` and `prose-review` have no web
+   access. Before `brief`, check that every source the prose must cite (a
+   regulation, a standard, an RFC, vendor documentation) is in the
+   repository where a stage can open it. If one is not, a `research` task
+   first, or tell the user in one line that it will be a gap.
+8. **Pinned commits.** For each code repository the prose describes, compare
+   the commit you would pin with the tip of its default branch. When it is
+   behind, say so in one line (how many commits) and ask which to pin.
 
 ## 3. Cutting the work into tasks
 
@@ -126,7 +137,13 @@ the work needs a split that changes what the user asked for.
   task, never one section across tasks.
 
 Keys are the paper's id plus a slug (`P02-threat-model`, `P02-bench-protocol`,
-`P02-bench-run`); `branch` follows the repository (`paper/p02/threat-model`).
+`P02-bench-run`), or the document's short name plus a slug without a paper
+(`THESIS-ch2-intro`); `branch` follows the repository (`paper/p02/threat-model`).
+
+**Adopting existing work.** A draft written without a brief is the current
+text of a revision: the brief revises it, never takes it as a contract. A
+task created without a flow takes one with `set_task_state` `flow`: its
+`next_stage` then follows that flow, counting the stages it already passed.
 
 **Order.** A task waits for what it uses, with `set_task_blocked`
 `{"type": "task", "task": "<key>", "until": "merged"}`: an experiment for its
@@ -150,10 +167,16 @@ produce is not created: tell the user what it waits on.
   `documents` when the deliverable has a build. Verify both are set on the
   task before dispatching `write`: approving repository settings alone
   does not select them. On an existing worktree, confirm the compiler is
-  available where jobs run; a bootstrap added later does not prepare it.
+  available where jobs run; a bootstrap added later does not prepare it:
+  for a worktree created before the repository's bootstrap was set, propose
+  the bootstrap command as `setup_add` and set it in the task's `setup`.
   When the build or its prerequisites are missing, surface the specific
   blocker and settle the setup in Tinto. A PDF compiled by the writer does
   not count as a saved Tinto version.
+- A check that fails because a program is missing (exit 127, `command not
+  found`) is a setup problem, not a defect of the work: propose the missing
+  setup with `propose_settings` and set it on the task. Never dispatch
+  `write` for it.
 - Every assignment opens with "Read and follow `MOD/stages/<file>.md`,
   section `<stage>`." (absolute path), then the task, then the intake notes.
   Never your own summary of the evidence, never "run the checks" (Tinto runs
@@ -283,13 +306,22 @@ when the prose is part of a document the repository builds.
 
 1. `brief` (guide `stages/brief.md`): the section, revision or report, the
    paper and its manifest, the intake notes, and for a revision what must
-   change and why, with paths and lines. Its `handoff` is the brief: save it as
+   change and why, with paths and lines. That is the critique that motivates
+   the revision, from the user, a supervisor, a co-author or an external
+   reviewer: ask for it in the brainstorm when the request does not carry
+   it. With none, say so in the assignment: the brief's design check is then
+   the critique, and what it cannot fix comes back as questions. Never tell
+   `brief` to keep the question, objectives or thesis statement unchanged
+   unless the user said so. Its `handoff` is the brief: save it as
    `.agent/papers/<KEY>/brief.md`; if a template section is missing, dispatch
    `brief` again naming it. Record `set_task_state` `plan` from it (`what`
    from Task, `places` from Target, `risks` from Gaps, `out_of_scope` from
-   Forbidden), with `plan_reason` when replacing an existing plan. Resolve
-   any questions from `findings` (section 6) before dispatching the writer.
-   Update the brief if answers change it.
+   Forbidden), with `plan_reason` when replacing an existing plan. Ask every
+   question in its `findings` with `request_decisions` (section 1) before
+   dispatching `write`, with the brief's option as the recommended one;
+   never replace an answer with that option silently. Where section 1 lets
+   you decide yourself, record the option you take as a non-blocking
+   decision. Update the brief if answers change it.
 2. `write`: the **full text of `MOD/stages/write.md` pasted in** (a cheap
    model follows its prompt better than a file) and the brief's absolute
    path. Nothing else of yours: if something is missing, fix the brief. In a
@@ -297,9 +329,13 @@ when the prose is part of a document the repository builds.
    else."
 3. `prose-review` (guide `stages/review.md`): the brief's path and the
    intake notes, plus the protocol, raw run and analysis paths for an
-   experiment. Findings go back to `write`; one that starts with "Brief:"
-   goes to `brief` first, then `write`. Findings about the experiment itself
-   follow 5.3.
+   experiment. Never dispatch it, or any review stage, while a round opened
+   by failing checks is open on the task: fix the cause and `run_checks`
+   until it closes. Say in the assignment which review it is: the first
+   review of a text is always the full checklist; only a later one is a
+   "re-review in a round", with the round's items. Findings go back to
+   `write`; one that starts with "Brief:" goes to `brief` first, then
+   `write`. Findings about the experiment itself follow 5.3.
 
 Changes a co-author asks for on the pull request go to `write`, or to `brief`
 first when they change what the section claims.

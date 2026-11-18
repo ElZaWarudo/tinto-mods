@@ -1,8 +1,8 @@
 {
   "id": "papers",
   "name": "Papers",
-  "version": "0.3.0",
-  "description": "Elige un flujo para tu artículo. Redacta una sección o lleva un experimento preregistrado desde la ejecución hasta el manuscrito.",
+  "version": "0.4.0",
+  "description": "Prepara un borrador para revisión, redacta una sección o lleva un experimento preregistrado hasta el manuscrito.",
   "min_tinto": "2.1.0",
   "coordinator": "COORDINATOR.md",
   "icon": "icon.svg",
@@ -22,7 +22,8 @@
     "research": { "label": "Investigación de fuentes", "stages": ["sources", "sources-review"] },
     "protocol": { "label": "Protocolo", "stages": ["protocol", "methods-review"] },
     "experiment": { "label": "Experimento y redacción", "stages": ["prepare", "run", "analysis", "brief", "write", "prose-review"] },
-    "section": { "label": "Redacción", "stages": ["brief", "write", "prose-review"] }
+    "section": { "label": "Redacción", "stages": ["brief", "write", "prose-review"] },
+    "draft": { "label": "Borrador para revisión", "stages": ["brief", "write", "prose-review"] }
   },
   "start": [
     {
@@ -30,13 +31,14 @@
       "label": "Flujo de Papers",
       "options": [
         "Redacción",
+        "Borrador para revisión",
         "Experimento y redacción",
         "Protocolo",
         "Investigación de fuentes"
       ]
     },
-    { "id": "paper", "label": "Artículo", "from": "papers/*/paper.yaml" },
-    { "id": "notes", "label": "Encargo", "optional": true },
+    { "id": "paper", "label": "Artículo", "from": "papers/*/paper.yaml", "optional": true },
+    { "id": "notes", "label": "Encargo (incluye el capítulo o documento si no hay artículo)", "optional": true },
     { "id": "writer-model", "label": "Modelo de redacción (OpenCode, provider/model)", "optional": true }
   ],
   "settings": {

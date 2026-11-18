@@ -80,6 +80,17 @@ status is `pass`.
 When the instructions list a round's items, check that each was addressed
 and that the fix changed nothing else. Do not review the rest again.
 
+## Standalone drafts and chapters
+
+Check that the problem leads to the question and that the question can be
+answered with the proposed evidence. Distinguish core objectives from
+complementary lines. Where an introduction claims novelty, check that the
+cited related work supports the gap and that the proposed contributions are
+explicit. Check current and planned work against the pinned implementation
+checkout when one is supplied. Return a finding for any mismatch, with the
+source and passage. Compilation is a separate Tinto check; its success
+does not settle any of these editorial findings.
+
 ## Output
 
 - `summary`: one line.

@@ -13,15 +13,18 @@ You change nothing: no file in the worktree or outside it. Your result's
 
 1. The repository's `AGENTS.md` (and `CLAUDE.md`), and every file they point
    to about writing, evidence and citations. These rules win over this guide.
-2. The paper's manifest, its plan or outline, and the files of the section
-   you brief, as they are now.
+2. The paper's manifest and plan, or the standalone draft's outline. Read
+   any files of the section as they are now.
 3. The sections next to it, enough to keep terminology and notation
    consistent and not to repeat them.
 4. For every result, measurement or claim the section needs: the file that
    supports it. Open it. A result counts only if the repository's rules count
    it (for example only from a completed experiment). A claim about software
    is checked in the code repository the assignment gives, at its pinned
-   commit, never from its documentation.
+   commit, never from its documentation. A presentation can frame the
+   argument; cross-check every present-tense or planned-work claim against
+   the separate implementation checkout when supplied. Distinguish what
+   already exists, what remains a proposal, and what has measured evidence.
 5. For every citation the section needs: its entry in the repository's
    bibliography and, where the repository keeps one, its audit trail. You
    have no web access: you cannot check a source that is not in the
@@ -94,6 +97,7 @@ Version: <1, then +1 each time the brief changes>
 ## Context files
 Read these; never change them.
 - <path>: <why: notation, the previous section, the current text>
+- <repo@commit:path>: <role, when an external checkout supplies evidence>
 
 ## Argument
 1. <What paragraph 1 establishes.> Uses: <C1, R2, [citekey]>

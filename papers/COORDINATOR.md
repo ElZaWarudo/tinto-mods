@@ -2,11 +2,12 @@
 
 Start from the researcher's choice in **Flujo de Papers** on Tinto's
 coordinator start form. Use the corresponding `create_task` `flow` for
-each new task. Each task produces one pull request a co-author reviews.
+each new task. Delivery flows produce one pull request a co-author reviews.
 
-| Choice | `flow` and stages | Its pull request carries |
+| Choice | `flow` and stages | Deliverable |
 |---|---|---|
 | Redacción | `section` · `brief` → `write` → `prose-review` | a section or revision |
+| Borrador para revisión | `draft` · `brief` → `write` → `prose-review` | a local draft, with its saved PDF when it builds |
 | Experimento y redacción | `experiment` · `prepare` → `run` → `analysis` → `brief` → `write` → `prose-review` | raw results, reproducible analysis and a written section or results report |
 | Protocolo | `protocol` · `protocol` → `methods-review` → researcher approval | a preregistered experiment protocol |
 | Investigación de fuentes | `research` · `sources` → `sources-review` | verified bibliography entries |
@@ -56,13 +57,16 @@ optional override for this batch. If a conversation already named a flow,
 use that choice when starting without form answers. If no flow is clear,
 ask before creating tasks. For an existing task, keep its saved flow
 and stage sequence when resuming.
+For `draft`, `Encargo` can identify a standalone chapter or document with
+no paper manifest. Use its outline and sources in place of the paper plan.
+For other flows, resolve the paper from the selection or the request.
 
 1. Read the repository's `AGENTS.md` (and `CLAUDE.md`), `README.md`, every
    procedure they point to (skills, templates, schemas, the pull request
-   template), its build file, and for the chosen paper its own guide, its
-   manifest and its plan. When the `Artículo` line is not a path to a paper
-   manifest (no file matched, so the user typed it), find the paper whose id
-   or title it names; if none or several match, ask in one `choice`.
+   template), its build file, and, when there is a paper, its own guide,
+   manifest and plan. When the `Artículo` line names a paper without giving
+   its manifest path, resolve it by id or title. If a paper is required and
+   the request leaves its identity unclear, ask one focused question.
 2. Write down the repository's answers to these. They are the **intake
    notes** you copy into every assignment:
    - the paper's files, and the files nobody may edit (raw results, other
@@ -143,7 +147,13 @@ produce is not created: tell the user what it waits on.
   never assume it.
 - `set_task_state` with the repository's `checks` and any `setup` they
   need. For prose, also set the document build in `checks` and its PDF in
-  `documents` when the deliverable has a build.
+  `documents` when the deliverable has a build. Verify both are set on the
+  task before dispatching `write`: approving repository settings alone
+  does not select them. On an existing worktree, confirm the compiler is
+  available where jobs run; a bootstrap added later does not prepare it.
+  When the build or its prerequisites are missing, surface the specific
+  blocker and settle the setup in Tinto. A PDF compiled by the writer does
+  not count as a saved Tinto version.
 - Every assignment opens with "Read and follow `MOD/stages/<file>.md`,
   section `<stage>`." (absolute path), then the task, then the intake notes.
   Never your own summary of the evidence, never "run the checks" (Tinto runs
@@ -259,8 +269,13 @@ as evidence.
 
 ### 5.4 Shared prose stages
 
-For `section`, attach the code repositories the paper describes at the
-commits its manifest pins. For `experiment`, use the run and analysis from
+For `section` and `draft`, attach the code repositories the prose describes at
+the commits its manifest pins or the researcher requests. When a presentation
+or other older source supplies the argument, attach it separately and label
+its purpose. For claims about the current implementation, pin and attach the
+current agreed branch tip as implementation evidence, even when both inputs
+come from the same repository. Give `brief` and `prose-review` both checkout
+paths and commits. For `experiment`, use the run and analysis from
 the preceding stages of the same task. For either flow, set `write_paths`
 from the brief's Target files before `write`. Include the paper's manifest
 only when the brief assigns a change to it. Expose the PDF in `documents`
@@ -308,6 +323,13 @@ Ask, as section 1 says, when:
 
 ## 7. Delivery
 
+For `draft`, stop before commit and push. Confirm the PDF appears in
+`delivery_overview` `documents` after Tinto's checks and report the draft
+path, PDF version and editorial verdict to the researcher. Report a missing
+saved version or a failed review separately from a successful build. Keep
+the task and its worktree available for the next revision. Resume delivery
+only if the researcher asks for it.
+
 For work taken from the article plan or requested directly, use
 `no_jira_steps: true` so the merge completes delivery. If missing, include
 it in the settings proposal. Only use Jira when the user gives a Jira issue
@@ -339,8 +361,10 @@ the same brief saved in each task's folder. Run
 `brief` on the first task; on the others, so their flow counts it, dispatch
 `brief` with "Return the brief at `<path>` verbatim as your handoff; change
 nothing." Each `write` gets `agent: "opencode"` and
-its `model`; `prose-review` stays on Claude. Run each to a passing review,
-stop before the commit, and report in one table per model: rounds to pass,
+its `model`; `prose-review` stays on Claude. Use the same pinned sources,
+document path and build check across the tasks so Tinto can show their PDFs
+in the same history. Run each to a passing review, stop before the commit,
+and report each model's saved version, rounds to pass,
 unauthorised claims and citations the reviews found, the writer's tokens
 (`usage`) and, if the user gives prices, cost per accepted section. The user
 chooses which task goes on; the others are removed in Tinto.
